@@ -10,11 +10,7 @@ struct data {
 	char plat[10];
 };
 
-/*struct transaksi {
-	float masuk;
-	float keluar;
-	float lama;
-}; */
+
 
 time_t t;
 struct tm *tm;
@@ -141,9 +137,6 @@ int kedalam () {
 	fflush(stdin);
 	scanf("%[^\n]", &parkir.plat);
 	
-//	printf("Waktu Masuk : ");
-//	fflush(stdin);
-//	scanf("%f", &masuk);
 	
 	
 	system ("cls");
@@ -259,7 +252,6 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 		printf("| Jam Masuk          : %.2f \n", masuk);
 		printf("| Jam Keluar         : %.2f \n", keluar);
 	//proses penghitungan biaya parkir
-	//lama = keluar-masuk;
 	lama = difftime(keluar, masuk);
 	if (lama <= 1 ) {
 	       biaya = roda4;
