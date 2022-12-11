@@ -11,10 +11,9 @@ struct data {
 };
 
 
-
+//untuk waktu agar dapat mengambil waktu lokal
 time_t t;
 struct tm *tm;
-
 time_t now;
     
 //variabel global
@@ -27,13 +26,12 @@ time_t masuk;
 time_t keluar;
 FILE *Data;
 
-//fungsi global
+//deklarasi fungsi
 int menu(); //untuk menampilkan menu awal
 int kedalam(); //untuk pilihan pertama inputan ketika kendaraan masuk parkir
 int meninggalkan(); //untuk pilihan kedua ketika kendaraan akan meninggalkan parkir
 int cekparkir(); //untuk mengecek kendaraan yang ada di dalam parkir
 //int cekkeluar(); //untuk mengecek kendaraan yang keluar parkir
-//int transaksi();
 
 
 
@@ -100,8 +98,8 @@ int menu () {
 }
 
 
-int kedalam () {
-	struct data parkir;
+int kedalam () { //fungsi untuk menu pertama saat kendaraan masuk parkir
+	struct data parkir; //pemanggilan struct data
 	t = time(NULL);
     tm = localtime(&t);
     now = time(NULL);
@@ -118,7 +116,8 @@ int kedalam () {
 	printf("+-----------------------------------------------------+\n");
 	printf("Masukan Jenis Kendaraan : "); scanf("%d", &parkir.jenis);
 	
-	if (parkir.jenis == 1) {
+	//untuk mengubah tipe data dari jenis kendaraan yang awalnya integer menjadi string
+	if (parkir.jenis == 1) {  
 		strcpy(kendaraan, "Kendaraan R2");
 	}
 	else if (parkir.jenis == 2) {
@@ -149,8 +148,8 @@ int kedalam () {
 	fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 
 
-	masuk = time(&masuk);
-    printf("Kendaraan Dalam Parkiran \n");
+	masuk = time(&masuk); //untuk jam masuk
+    printf("Kendaraan Dalam Parkiran \n"); //data yang di print pada terminal (interface)
     	printf("+-----------------------------------------------------+\n");
 		printf("|                    PARKIR KENDARAAN                 |\n");
 		printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
@@ -165,7 +164,7 @@ int kedalam () {
     return 0;
 }
 
-int meninggalkan () {
+int meninggalkan () { //fungsi untuk menu kedua saat kendaraan keluar parkir
 	struct data parkir;
     t = time(NULL);
     tm = localtime(&t);
@@ -181,6 +180,7 @@ int meninggalkan () {
 	printf("+-----------------------------------------------------+\n");
 	printf("Masukan Jenis Kendaraan : "); scanf("%d", &parkir.jenis);
 	
+	//untuk mengubah tipe data dari jenis kendaraan yang awalnya integer menjadi string
 	if (parkir.jenis == 1) {
 		strcpy(kendaraan, "Kendaraan R2");
 	}
@@ -203,14 +203,16 @@ int meninggalkan () {
 	
 	system ("cls");
 
-Data = fopen ("coba.txt", "r");
+//pengambilan atau pengecak data diambil dari plat nomornya, untuk di struk data terakhir. 
+/*Data = fopen ("coba.txt", "r");
 fprintf(Data, " Jenis Kendaraan    : %s \n", kendaraan);
 fprintf(Data, " Plat Nomor         : %s \n", parkir.plat);
 fprintf(Data, " Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
-fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
+fprintf(Data, " Jam Masuk          : %d \n", time(&masuk)); */
 
-	keluar = time(&keluar);
-			
+	keluar = time(&keluar);	//untuk jam keluar
+	
+	if (parkir.jenis == 1) {	
 	printf("+-----------------------------------------------------+\n");
 	printf("|                 NOTA PARKIR KENDARAAN               |\n");
 	printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
@@ -220,6 +222,7 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 	printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 	printf("| Jam Masuk          : %d:%d \n", localtime(&masuk)->tm_hour, localtime(&masuk)->tm_min);
 	printf("| Jam Keluar         : %d:%d \n", localtime(&keluar)->tm_hour, localtime(&keluar)->tm_min);
+	
 	//proses penghitungan biaya parkir
 	lama = difftime(keluar, masuk) / 3600;
 	if (lama <= 12 ) {
@@ -235,7 +238,6 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 		}
 	printf("| Lama Parkir        : %.2f jam\n", lama);
 	printf("| Biaya Parkir       : Rp. %0.3f \n", biaya);
-	printf("| Metode Pembayaran  : Rp. %0.3f \n", biaya);
 	printf("+-----------------------------------------------------+\n");
 	printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 	printf("+-----------------------------------------------------+\n");
@@ -246,13 +248,14 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 		printf("|                 NOTA PARKIR KENDARAAN               |\n");
 		printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 		printf("+-----------------------------------------------------+\n");
-		printf("| Jenis Kendaraan    : \n");
+		printf("| Jenis Kendaraan    : %s \n", kendaraan);
 		printf("| Plat Nomor         : %s \n", parkir.plat);
 		printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 		printf("| Jam Masuk          : %.2f \n", masuk);
 		printf("| Jam Keluar         : %.2f \n", keluar);
+		
 	//proses penghitungan biaya parkir
-	lama = difftime(keluar, masuk);
+	lama = difftime(keluar, masuk) / 3600;
 	if (lama <= 1 ) {
 	       biaya = roda4;
 	   } 
@@ -264,8 +267,8 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 	else {
 		   printf ("Denda Karcis Hilang Rp. 100.000");
 		}
-		printf("| Lama Parkir        : %.2 \n", lama);
-		printf("| Biaya Parkir       : Rp. %0.3f\n", biaya);
+		printf("| Lama Parkir        : %.2f jam\n", lama);
+		printf("| Biaya Parkir       : Rp. %0.3f \n", biaya);
 		printf("+-----------------------------------------------------+\n");
 		printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 		printf("+-----------------------------------------------------+\n");
@@ -275,13 +278,14 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 		printf("|                 NOTA PARKIR KENDARAAN               |\n");
 		printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 		printf("+-----------------------------------------------------+\n");
-		printf("| Jenis Kendaraan    : \n");
+		printf("| Jenis Kendaraan    : %s \n", kendaraan);
 		printf("| Plat Nomor         : %s \n", parkir.plat);
 		printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 		printf("| Jam Masuk          : %.2f \n", masuk);
 		printf("| Jam Keluar         : %.2f \n", keluar);
+		
 	//proses penghitungan biaya parkir
-	lama = keluar-masuk;
+	lama = difftime(keluar, masuk) / 3600;
 	if (lama <= 1 ) {
 	       biaya = roda6;
 	   } 
@@ -293,8 +297,8 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 	else {
 		   printf ("Denda Karcis Hilang Rp. 100.000");
 		}
-		printf("| Lama Parkir        : \n", lama);
-		printf("| Biaya Parkir       : \n", biaya);
+		printf("| Lama Parkir        : %.2f jam\n", lama);
+		printf("| Biaya Parkir       : Rp. %0.3f \n", biaya);
 		printf("+-----------------------------------------------------+\n");
 		printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 		printf("+-----------------------------------------------------+\n");
@@ -304,13 +308,14 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 		printf("|                 NOTA PARKIR KENDARAAN               |\n");
 		printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 		printf("+-----------------------------------------------------+\n");
-		printf("| Jenis Kendaraan    : \n");
+		printf("| Jenis Kendaraan    : %s \n", kendaraan);
 		printf("| Plat Nomor         : %s \n", parkir.plat);
 		printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 		printf("| Jam Masuk          : %.2f \n", masuk);
 		printf("| Jam Keluar         : %.2f \n", keluar);
+		
 	//proses penghitungan biaya parkir
-	lama = keluar-masuk;
+	lama = difftime(keluar, masuk) / 3600;
 	if (lama <= 1 ) {
 	       biaya = roda4 + premium;
 	   } 
@@ -322,16 +327,11 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
 	else {
 		   printf ("Denda Karcis Hilang Rp. 100.000");
 		}
-		printf("| Lama Parkir        : \n", lama);
-		printf("| Biaya Parkir       : \n", biaya);
+		printf("| Lama Parkir        : %.2f jam\n", lama);
+		printf("| Biaya Parkir       : Rp. %0.3f \n", biaya);
 		printf("+-----------------------------------------------------+\n");
 		printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 		printf("+-----------------------------------------------------+\n");
    }
 	return 0;
-}
-
-
-int cekparkir(){
-	
 }
