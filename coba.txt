@@ -1,0 +1,3 @@
+Kendaraan R2,dk 123 dk,15-12-2022,1671082876
+Kendaraan R2, dk 456 dk, 15-12-2022, 1671086872 
+Kendaraan R6, dk 234 dk, 15-12-2022, 1671087383 

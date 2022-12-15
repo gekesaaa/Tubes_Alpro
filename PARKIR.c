@@ -5,9 +5,9 @@
 
 
 
-struct data { 
+struct data { //struct untuk data parkir
 	int jenis;
-	char plat[10];
+	char plat[20];
 };
 
 
@@ -28,10 +28,11 @@ FILE *Data;
 
 //deklarasi fungsi
 int menu(); //untuk menampilkan menu awal
-int kedalam(); //untuk pilihan pertama inputan ketika kendaraan masuk parkir
-int meninggalkan(); //untuk pilihan kedua ketika kendaraan akan meninggalkan parkir
-int cekparkir(); //untuk mengecek kendaraan yang ada di dalam parkir
-//int cekkeluar(); //untuk mengecek kendaraan yang keluar parkir
+void kedalam(); //untuk pilihan pertama inputan ketika kendaraan masuk parkir
+void meninggalkan(); //untuk pilihan kedua ketika kendaraan akan meninggalkan parkir
+int pembayaran(); //untuk pembayaran saat keluar parkir 
+void cekparkir(); //untuk mengecek kendaraan yang ada di dalam parkir
+int cekkeluar(); //untuk mengecek kendaraan yang keluar parkir
 
 
 
@@ -52,16 +53,18 @@ int main () {
 			system("pause");
 			system("cls");
 			break;
-		/*case 3 :
+		case 3 :
+			system("cls");
 			cekparkir();
 			system("pause");
 			system("cls");
 			break;
-		case 4 :
-			cekkeluar();
-			system("pause");
-			system("cls");
-			break; */
+//		case 4 :
+//			system("cls");
+//			cekkeluar();
+//			system("pause");
+//			system("cls");
+//			break;
 		case 5 :
 			system("cls");
 			printf ("TERIMAKASIHHH");
@@ -98,13 +101,11 @@ int menu () {
 }
 
 
-int kedalam () { //fungsi untuk menu pertama saat kendaraan masuk parkir
+void kedalam () { //prosedur untuk menu pertama saat kendaraan masuk parkir
 	struct data parkir; //pemanggilan struct data
 	t = time(NULL);
     tm = localtime(&t);
     now = time(NULL);
-	
-	
 	
 	printf("+-----------------------------------------------------+\n");
 	printf("|                  JENIS KENDARAAN                    |\n");
@@ -136,17 +137,10 @@ int kedalam () { //fungsi untuk menu pertama saat kendaraan masuk parkir
 	fflush(stdin);
 	scanf("%[^\n]", &parkir.plat);
 	
-	
-	
 	system ("cls");
 	
 	Data = fopen("coba.txt", "a"); //memasukan data pada file external
-	fprintf(Data, "+-----------------------------------------------------+\n");
-	fprintf(Data, " Jenis Kendaraan    : %s \n", kendaraan);
-	fprintf(Data, " Plat Nomor         : %s \n", parkir.plat);
-	fprintf(Data, " Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
-	fprintf(Data, " Jam Masuk          : %d \n", time(&masuk));
-
+	fprintf(Data, "%s, %s, %d-%d-%d, %d \n", kendaraan, parkir.plat, tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900, time(&masuk));
 
 	masuk = time(&masuk); //untuk jam masuk
     printf("Kendaraan Dalam Parkiran \n"); //data yang di print pada terminal (interface)
@@ -161,63 +155,53 @@ int kedalam () { //fungsi untuk menu pertama saat kendaraan masuk parkir
 		printf("+-----------------------------------------------------+\n");
     
     fclose(Data);
-    return 0;
 }
 
-int meninggalkan () { //fungsi untuk menu kedua saat kendaraan keluar parkir
+void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
 	struct data parkir;
+	int read;
+	char plat[20];
+	char kendaraanfile[20];
+	char tanggal[20];
+	char waktumasuk[20];
     t = time(NULL);
     tm = localtime(&t);
 	float biaya, progresif, lama, jam;
 	
-	printf("+-----------------------------------------------------+\n");
-	printf("|                  JENIS KENDARAAN                    |\n");
-	printf("+-----------------------------------------------------+\n");
-	printf("|     1. Kendaraan R2                                 |\n");
-	printf("|     2. Kendaraan R4                                 |\n");
-	printf("|     3. Kendaraan R6                                 |\n");
-	printf("|     4. Premium Kendaraan R4                         |\n");
-	printf("+-----------------------------------------------------+\n");
-	printf("Masukan Jenis Kendaraan : "); scanf("%d", &parkir.jenis);
-	
-	//untuk mengubah tipe data dari jenis kendaraan yang awalnya integer menjadi string
-	if (parkir.jenis == 1) {
-		strcpy(kendaraan, "Kendaraan R2");
-	}
-	else if (parkir.jenis == 2) {
-		strcpy(kendaraan, "Kendaraan R4");
-	}
-	else if (parkir.jenis == 3) {
-		strcpy(kendaraan, "Kendaraan R6");
-	}
-	else if (parkir.jenis == 4) {
-		strcpy(kendaraan, "Premium Kendaraan R4");
-	}
-	
-	system ("cls");
-	
+	//untuk pencarian data kendaraan yang akan keluar parkir
 	printf("Plat Nomor Kendaraan : ");
 	fflush(stdin);
-	scanf("%[^\n]", &parkir.plat);
-	fflush(stdin);
-	
+	scanf("%[^\n]", parkir.plat);
+	getchar();
 	system ("cls");
 
 //pengambilan atau pengecak data diambil dari plat nomornya, untuk di struk data terakhir. 
-/*Data = fopen ("coba.txt", "r");
-fprintf(Data, " Jenis Kendaraan    : %s \n", kendaraan);
-fprintf(Data, " Plat Nomor         : %s \n", parkir.plat);
-fprintf(Data, " Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
-fprintf(Data, " Jam Masuk          : %d \n", time(&masuk)); */
-
-	keluar = time(&keluar);	//untuk jam keluar
+	Data = fopen("coba.txt", "r");
+	if (Data == NULL) {
+		printf ("DATA KENDARAAN SAAT MASUK ANDA TIDAK DITEMUKAN \n SILAHKAN MASUK TERLEBIH DAHULU");
+		kedalam();
+	}
+	else {
+		do{
+			read = fscanf(Data,"%20[^,],%20[^,],%20[^,],%20[^\n]\n", kendaraanfile, plat, tanggal, waktumasuk);
+			if (read == 4){
+				if(strcmp(parkir.plat, plat) == 0){
+					printf("Jenis kendaraan %s %s %s %s", kendaraanfile, plat, tanggal, waktumasuk);
+				}
+			}
+		}while(!feof(Data));
+	}
+	fclose(Data);
+system("pause");
+system("cls");
 	
-	if (parkir.jenis == 1) {	
+	keluar = time(&keluar);	//untuk jam keluar
+	if (parkir.jenis == 1) {	 //untuk struk pembayaran kendaraan R2
 	printf("+-----------------------------------------------------+\n");
 	printf("|                 NOTA PARKIR KENDARAAN               |\n");
 	printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 	printf("+-----------------------------------------------------+\n");
-	printf("| Jenis Kendaraan    : %s \n", kendaraan);                  
+	printf("| Jenis Kendaraan    : %s \n", kendaraanfile);                  
 	printf("| Plat Nomor         : %s \n", parkir.plat);
 	printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 	printf("| Jam Masuk          : %d:%d \n", localtime(&masuk)->tm_hour, localtime(&masuk)->tm_min);
@@ -243,12 +227,12 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk)); */
 	printf("+-----------------------------------------------------+\n");
    }
    
-   else if (parkir.jenis == 2) {
+   else if (parkir.jenis == 2) {	//untuk struk pembayaran kendaraan R4
    		printf("+-----------------------------------------------------+\n");
 		printf("|                 NOTA PARKIR KENDARAAN               |\n");
 		printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 		printf("+-----------------------------------------------------+\n");
-		printf("| Jenis Kendaraan    : %s \n", kendaraan);
+		printf("| Jenis Kendaraan    : %s \n", kendaraanfile);
 		printf("| Plat Nomor         : %s \n", parkir.plat);
 		printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 		printf("| Jam Masuk          : %.2f \n", masuk);
@@ -273,12 +257,12 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk)); */
 		printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 		printf("+-----------------------------------------------------+\n");
    }
-   else if (parkir.jenis == 3) {
+   else if (parkir.jenis == 3) {	//untuk struk pembayaran kendaraan R6
    		printf("+-----------------------------------------------------+\n");
 		printf("|                 NOTA PARKIR KENDARAAN               |\n");
 		printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 		printf("+-----------------------------------------------------+\n");
-		printf("| Jenis Kendaraan    : %s \n", kendaraan);
+		printf("| Jenis Kendaraan    : %s \n", kendaraanfile);
 		printf("| Plat Nomor         : %s \n", parkir.plat);
 		printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 		printf("| Jam Masuk          : %.2f \n", masuk);
@@ -303,12 +287,12 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk)); */
 		printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 		printf("+-----------------------------------------------------+\n");
    }
-   else if (parkir.jenis == 4) {
+   else if (parkir.jenis == 4) { //untuk struk pembayaran kendaraan R4 Premium
    		printf("+-----------------------------------------------------+\n");
 		printf("|                 NOTA PARKIR KENDARAAN               |\n");
 		printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 		printf("+-----------------------------------------------------+\n");
-		printf("| Jenis Kendaraan    : %s \n", kendaraan);
+		printf("| Jenis Kendaraan    : %s \n", kendaraanfile);
 		printf("| Plat Nomor         : %s \n", parkir.plat);
 		printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 		printf("| Jam Masuk          : %.2f \n", masuk);
@@ -332,6 +316,66 @@ fprintf(Data, " Jam Masuk          : %d \n", time(&masuk)); */
 		printf("+-----------------------------------------------------+\n");
 		printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 		printf("+-----------------------------------------------------+\n");
-   }
-	return 0;
+   } 
+}
+
+
+/*void pembayaran () {
+	int bayar;
+	
+	printf("+-----------------------------------------------------+\n");
+	printf("|                  JENIS KENDARAAN                    |\n");
+	printf("+-----------------------------------------------------+\n");
+	printf("|     1. Cash                                         |\n");
+	printf("|     2. E-Money                                      |\n");
+	printf("+-----------------------------------------------------+\n");
+	printf ("Pembayaran dilakukan dengan apa?");
+	scanf("%d", &bayar);
+	
+	if (bayar == 1) {
+		//menggunakan metode pembayaran cash nanti ada kembalian
+	}
+	else if (bayar == 2) {
+		//masukkan no e money setelahnya mengecek apakah e money berisi uang atau tidak 
+		//jika tidak arahkan untuk melakukan top up
+		//jika sudah berisi langsung dikurangi saldo dari e money
+	}
+} */
+//untuk notanya nanti setelah selesai memilih metode pembayaran
+//coba cari cara pembayaran di tol
+//misal kalo e money tidak isi saldo bisa minjam ke pengendara di belakang atau beralih ke cash saja
+
+void cekparkir() {
+	int areaparkir;
+	
+	printf("+-----------------------------------------------------------------------------------------------+\n");
+	printf("|                ||===================================================||                        |\n");
+    printf("|                ||                PARKIR KENDARAAN                   ||                        |\n");
+    printf("|                ||              BANDARA INTERNASIONAL                ||                        |\n");
+    printf("|                ||               I GUSTI NGURAH RAI                  ||                        |\n");
+    printf("|                ||===================================================||                        |\n");
+    printf("|                                                                                               |\n");
+    printf("+----+-----------------------------------+------------------------------------------------------|\n");
+    printf("| No |     AREA PARKIR                   | Catatan :                                            |\n");
+    printf("+----+-----------------------------------+                                                      |\n");
+    printf("|  1 | Gedung Parkir Bertingkat          |==> PARKIR KENDARAAN RODA 4 (MOBIL,dsb)               |\n");
+    printf("|  2 | Parkir Kendaraan Bermotor Roda 2  |==> PARKIR KENDARAAN KHUSUS SEPEDA MOTOR RODA 2       |\n");
+    printf("|  3 | Area Parkir Bus                   |==> PARKIR KHUSUS BUS /TRUK                           |\n");
+    printf("|  4 | Area Parkir Premium               |==> PARKIR KHUSUS RODA 4                              |\n");
+    printf("+----+-----------------------------------+------------------------------------------------------+\n");
+		    
+		while(1){
+	    	printf("\n\t\t Pilih Area Parkir : ");
+		    scanf("%d", &areaparkir);
+			if(areaparkir >=1 || areaparkir <=4){
+				printf("Maaf input anda salah!\nSilahkan Input kembali! (1 - 4)!\n ");
+			}else{
+				system("cls || clear");
+			}
+		}
+}
+
+
+int cekkeluar() {
+	 
 }
