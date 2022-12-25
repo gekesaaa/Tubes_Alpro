@@ -1,8 +1,0 @@
-Kendaraan R2, dk 123 dk, 15-12-2022, 1671095044 
-Kendaraan R4, dk 345 dk, 15-12-2022, 1671095063 
-Kendaraan R6, dk 789 dk, 15-12-2022, 1671095514 
-Kendaraan R2, dk 901 dk, 16-12-2022, 1671155581 
-Kendaraan R4, dk 789 dk, 16-12-2022, 1671155624 
-Premium Kendaraan R4, dk 999 dk, 19-12-2022, 1671419047 
-Kendaraan R2, dk 123 dk, 19-12-2022, 1671420220 
-Kendaraan R2, dk 123 dk, 19-12-2022, 1671460284 
