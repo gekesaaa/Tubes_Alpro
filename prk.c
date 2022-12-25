@@ -25,6 +25,7 @@ float premium = 30.000;
 time_t masuk;
 time_t keluar;
 FILE *Data;
+FILE *Copy;
 
 
 int menu(); //fungsi untuk menampilkan menu awal
@@ -43,7 +44,7 @@ int main () {
 	while (1) {
 	switch (menu()){
 		case 1 : 
-			//system("cls");
+			system("cls");
 			kedalam();
 			system("pause");
 			system("cls");
@@ -99,7 +100,7 @@ int menu () { //fungsi untuk menampilkan menu awal
 	return pilih;
 }
 
-int validasi () {
+int validasi () { //fungsi validasi untuk pilihan menu
 	int angka;
 	char karakter;
 	if (scanf("%d%c", &angka, &karakter) !=2 || angka < 1 || angka > 5 || karakter != '\n'){
@@ -111,6 +112,17 @@ int validasi () {
 	}
 }
 
+int validasijenis () { //fungsi validasi untuk pilihan jenis kendaraan
+	int angka;
+	char karakter;
+	if (scanf("%d%c", &angka, &karakter) !=2 || angka < 1 || angka > 4 || karakter != '\n'){
+		fflush(stdin);
+		printf("MENU YANG ADA INPTUKAN TIDAK TERSEDIA \n SILAHKAN PILIH MENU YANG TERSEDIA");
+		return validasijenis;
+	} else {
+		return angka;
+	}
+}
 
 void kedalam () { //prosedur untuk menu pertama saat kendaraan masuk parkir
 	struct data parkir; //pemanggilan struct data
@@ -129,8 +141,8 @@ void kedalam () { //prosedur untuk menu pertama saat kendaraan masuk parkir
 	printf("|     3. Kendaraan R6                                 |\n");
 	printf("|     4. Premium Kendaraan R4                         |\n");
 	printf("+-----------------------------------------------------+\n");
-	printf("Masukan Jenis Kendaraan : "); 
-	scanf("%d", &parkir.jenis);
+	printf("Masukan Jenis Kendaraan : "); parkir.jenis = validasijenis();
+	//scanf("%d", &parkir.jenis);
 	
 	//untuk mengubah tipe data dari jenis kendaraan yang awalnya integer menjadi string
 	if (parkir.jenis == 1) {  
@@ -155,61 +167,23 @@ void kedalam () { //prosedur untuk menu pertama saat kendaraan masuk parkir
 	system("cls");
 	
 	
-//	if(parkir.jenis == 0){
-//		if(cekdatasama(parkir.jenis, parkir.plat) == 0){
-//			printf("\n Kendaraan Dengan Plat %s sudah Berada di dalam parkiran ... \n", parkir.plat);
-//		}
-//		else {
-//			Data = fopen("coba.txt", "a"); //perintah untuk memasukan data ke dalam file external txt
-//			fprintf(Data, "%s, %s, %d-%d-%d, %d \n", kendaraan, parkir.plat, tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900, time(&masuk));
-//
-//			masuk = time(&masuk); //untuk jam masuk
-//    		printf("Kendaraan Dalam Parkiran \n"); //data yang di print pada terminal (interface)
-//    		printf("+-----------------------------------------------------+\n");
-//			printf("|                    PARKIR KENDARAAN                 |\n");
-//			printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
-//			printf("+-----------------------------------------------------+\n");
-//			printf("| Jenis Kendaraan    : %s \n", kendaraan);
-//			printf("| Plat Nomor         : %s \n", parkir.plat);
-//			printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
-//			printf("| Jam Masuk          : %d:%d \n", localtime(&masuk)->tm_hour, localtime(&masuk)->tm_min);
-//			printf("+-----------------------------------------------------+\n");
-//    
-//    		fclose(Data);
-//		}
-//	}
-	
-	Data = fopen("coba.txt", "a"); //perintah untuk memasukan data ke dalam file external txt
-	fprintf(Data, "%s, %s, %d-%d-%d, %d \n", kendaraan, parkir.plat, tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900, time(&masuk));
+	Data = fopen("masuk.txt", "a"); //perintah untuk memasukan data ke dalam file external txt
+	fprintf(Data, "%s, %s, %d-%d-%d, %d:%d \n", kendaraan, parkir.plat, tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900, localtime(&masuk)->tm_hour, localtime(&masuk)->tm_min); 
+	//jika waktu digunakan seperti awal (time_t(&masuk) maka waktu akan di convert ketika masuk file, sedangkan jika begini waktu mau menyesuaikan tetapi tidak bisa dijumlahkan dengan cara difftime
 
 	masuk = time(&masuk); //untuk jam masuk
-    printf("Kendaraan Dalam Parkiran \n"); //data yang di print pada terminal (interface)
+    printf("Kendaraan  Masuk Dalam Parkiran \n"); //data yang di print pada terminal (interface)
     	printf("+-----------------------------------------------------+\n");
 		printf("|                    PARKIR KENDARAAN                 |\n");
 		printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 		printf("+-----------------------------------------------------+\n");
 		printf("| Jenis Kendaraan    : %s \n", kendaraan);
 		printf("| Plat Nomor         : %s \n", parkir.plat);
-		printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
+		printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900); //kenapa malah jadi tanggal 1-1-1970
 		printf("| Jam Masuk          : %d:%d \n", localtime(&masuk)->tm_hour, localtime(&masuk)->tm_min);
 		printf("+-----------------------------------------------------+\n");
     
     fclose(Data);
-}
-
-int cekdatasama (int jenis, char cari[10]) {
-	FILE *Data = ("coba.txt", "r");
-	struct data parkir;
-	char kendaraan;
-	if(jenis == 0) {
-		while(!feof(Data)){
-			fscanf(Data, "%s, %s, %d-%d-%d, %d \n", kendaraan, parkir.plat, tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900, time(&masuk));
-			if((strcmp(cari, parkir.plat)) == 0){
-				fclose(Data);
-				return 1;
-			} 
-		}
-	}
 }
 
 void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
@@ -234,7 +208,7 @@ void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
 	//keluar = time(&keluar);
 
 //pengambilan data diambil dari plat nomornya, untuk di struk data terakhir. 
-	Data = fopen("coba.txt", "r");
+	Data = fopen("masuk.txt", "r");
 	if (Data == NULL) {
 		printf ("DATA KENDARAAN SAAT MASUK ANDA TIDAK DITEMUKAN \n SILAHKAN MASUK TERLEBIH DAHULU");
 		kedalam();
@@ -244,43 +218,71 @@ void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
 			read = fscanf(Data,"%20[^,], %20[^,], %20[^,], %20[^\n]\n", kendaraanfile, plat, tanggal, masuk);
 			if (read == 4){
 				if(strcmp(parkir.plat, plat) == 0){
+					//if (kendaraanfile == "Kendaraan R2") {
 					printf("+-----------------------------------------------------+\n");
 					printf("|                 NOTA PARKIR KENDARAAN               |\n");
 					printf("|            BANDARA INTERNASIONAL NGURAH RAI         |\n");
 					printf("+-----------------------------------------------------+\n");
 					printf("| Jenis Kendaraan    : %s \n", kendaraanfile);                  
-					printf("| Plat Nomor         : %s \n", parkir.plat);
+					printf("| Plat Nomor         : %s \n", plat);
 					printf("| Tanggal            : %d-%d-%d\n", tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 					printf("| Jam Masuk          : %s \n", masuk);
 					printf("| Jam Keluar         : %d:%d \n", localtime(&keluar)->tm_hour, localtime(&keluar)->tm_min);
-	
-						//proses penghitungan biaya parkir
-						//if (kendaraanfile == "Kendaraan R2");
-						lama = difftime(keluar, masuk) / 3600;
-							if (lama <= 12 ) {
-	       						biaya = roda2;
-	   						} 
-							else if (lama > 12 ) {
-	       						jam = lama - 12; 
-	       						progresif = 2.000 * jam;
-	       						biaya = roda2 + progresif;
-							} 
-							else {
-		   						printf ("Denda Karcis Hilang Rp. 50.000");
-							}
+					//proses penghitungan biaya parkir
+//						lama = keluar - masuk;
+//							if (lama <= 12 ) {
+//	       						biaya = roda2;
+//	   						} 
+//							else if (lama > 12 ) {
+//	       						jam = lama - 12; 
+//	       						progresif = 2.000 * jam;
+//	       						biaya = roda2 + progresif;
+//							} 
+//							else {
+//		   						printf ("Denda Karcis Hilang Rp. 50.000");
+//							}
 					printf("| Lama Parkir        : %.2f jam\n", lama);
 					printf("| Biaya Parkir       : Rp. %0.3f \n", biaya);
 					printf("+-----------------------------------------------------+\n");
 					printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 					printf("+-----------------------------------------------------+\n");
-					//printf("%s %s %s %s \n", kendaraanfile, plat, tanggal, waktumasuk);
-				}
+				} 
 			}
 		}while(!feof(Data));
-	}
-	fclose(Data);	
-//system("pause");
-//system("cls");
+	} 
+	fclose(Data);
+	
+	Data = fopen("masuk.txt", "r+");
+	Copy = fopen("keluar.txt", "a+"); 
+	
+	//menambahkan do while dan scanf seperti saat menampilkan nota
+	//mau manambahkan data ke file txt tapi ngga mau nambah file baru malah overwrite ke file sebelumnya dan ngebuat data lain malah ke hapus
+	do {
+		read = fscanf(Data,"%20[^,], %20[^,], %20[^,], %20[^\n]\n", kendaraanfile, plat, tanggal, masuk);
+		if (read == 4){
+			if(strcmp(parkir.plat, plat) == 0){
+				fprintf(Copy, "%s, %s, %d-%d-%d, %d:%d \n", kendaraanfile, plat, tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900, localtime(&keluar)->tm_hour, localtime(&keluar)->tm_min);
+			}
+		}
+	} while(!feof(Data)); //jika diganti (!feof(Copy)) maka tidak mau dijalankan
+	
+//	if(Data == NULL){
+//		printf("Tidak Ada Data Dalam File");
+//	}
+//	while (fread (&parkir, sizeof(struct data),1,Data)){
+//		if (parkir.plat != plat){
+//			fwrite(&parkir, sizeof(struct data),1,Copy);
+//		}
+//	}
+	fclose(Data);
+	fclose(Copy);
+	
+	remove("masuk.txt");
+	rename("keluar.txt","masuk.txt");
+	
+	printf("Kendaraan plat %s telah keluar parkiran \n", plat);
+}
+
 
 
 //jenis kendaraan, tanggal, jam masuk masih error karena mengambil data yang terakhir dimasukan
@@ -406,7 +408,7 @@ void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
 		printf("|           TERIMA KASIH ATAS KUNJUNGAN ANDA          |\n");
 		printf("+-----------------------------------------------------+\n");
    //} */
-}
+//}
 
 
 /*void pembayaran () {
@@ -436,6 +438,13 @@ void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
 
 void cekparkir() {
 	int areaparkir;
+	int repeat=1;
+	char buff[255];
+	char jenis_kendaraan[30];
+	int jenis_sama;
+	int total=0;
+	char jenisR4[30] = "kendaraan R4";
+	char jenisR2[30] = "Kendaraan R2";
 	
 	printf("+-----------------------------------------------------------------------------------------------+\n");
 	printf("|                ||===================================================||                        |\n");
@@ -453,15 +462,40 @@ void cekparkir() {
     printf("|  4 | Area Parkir Premium               |==> PARKIR KHUSUS RODA 4                              |\n");
     printf("+----+-----------------------------------+------------------------------------------------------+\n");
 		    
-		while(1){
+		do{
 	    	printf("\n\t\t Pilih Area Parkir : ");
 		    scanf("%d", &areaparkir);
-			if(areaparkir >=1 || areaparkir <=4){
+			if(areaparkir < 1 || areaparkir > 4){
 				printf("Maaf input anda salah!\nSilahkan Input kembali! (1 - 4)!\n ");
 			}else{
-				system("cls || clear");
+				//system("cls || clear");
+				repeat=0;
+			}
+		} while(repeat==1);
+		
+		Data = fopen("coba.txt", "r"); //memperlihatkan total kendaraan di area parkir lewat data txt
+		while(fgets(buff, sizeof(buff), Data)) {
+			strcpy(jenis_kendaraan, strtok(buff, ","));
+			
+			jenis_sama = strcmp(jenis_kendaraan, jenisR4);
+			if(jenis_sama == 0){
+				total++;
 			}
 		}
+		fclose(Data);
+		printf ("Total %s = %d \n", jenisR4,total);
+		
+		Data = fopen("coba.txt", "r"); //memperlihatkan total kendaraan di area parkir lewat data txt
+		while(fgets(buff, sizeof(buff), Data)) {
+			strcpy(jenis_kendaraan, strtok(buff, ","));
+			
+			jenis_sama = strcmp(jenis_kendaraan, jenisR2);
+			if(jenis_sama == 0){
+				total++;
+			}
+		}
+		fclose(Data);
+		printf ("Total %s = %d \n", jenisR2,total);
 }
 
 
