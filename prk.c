@@ -1,9 +1,10 @@
-#include <stdio.h> 
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
+#include <stdio.h> //library dasar untuk bahasa C
+#include <time.h> //library untuk waktu dan tanggal
+#include <stdlib.h> //library untuk exit
+#include <string.h> //library untuk string ataupun substring (strcmp, strcpy, dll)
 
-
+//UNTUK PEMBAYARAN NON TUNAI BELUM BISA
+//TAMBAHKAN PENGECEKAN UNTUK PLAT NOMOR DARI DAERAH MANA SESUAI DENGAN YANG DIINPUTKAN
 
 struct data { //struct untuk data parkir
 	int jenis;
@@ -35,7 +36,6 @@ void meninggalkan(); //prosedur untuk pilihan kedua ketika kendaraan akan mening
 int pembayaran(); //fungsi untuk pembayaran saat keluar parkir 
 void cekparkir(); //prosedur untuk mengecek kendaraan yang ada di dalam parkir
 int cekkeluar(); //fungsi untuk mengecek kendaraan yang keluar parkir
-void struk(); //prosedur untuk menampilkan struk pembayaran
 int validasi(); //fungsi untuk memvalidasi inputan yang akan dimasukan pada pemilihan menu
 
 
@@ -101,7 +101,7 @@ int menu () { //fungsi untuk menampilkan menu awal
 }
 
 int validasi () { //fungsi validasi untuk pilihan menu
-	int angka;
+	 int angka;
 	char karakter;
 	if (scanf("%d%c", &angka, &karakter) !=2 || angka < 1 || angka > 5 || karakter != '\n'){
 		fflush(stdin);
@@ -111,6 +111,8 @@ int validasi () { //fungsi validasi untuk pilihan menu
 		return angka;
 	}
 }
+
+
 
 void kedalam () { //prosedur untuk menu pertama saat kendaraan masuk parkir
 	struct data parkir; //pemanggilan struct data
@@ -168,6 +170,48 @@ void kedalam () { //prosedur untuk menu pertama saat kendaraan masuk parkir
 		printf("| Jam Masuk          : %d:%d \n", localtime(&masuk)->tm_hour, localtime(&masuk)->tm_min);
 		printf("+-----------------------------------------------------+\n");
     
+    
+    	//pembagian plat berdasarkan daerah
+    	if (strncmp(parkir.plat, "DK", 2) == 0 ) {
+		printf("Asal Kendaraan Ini dari Daerah Bali \n\n");
+		}
+		else if (strncmp(parkir.plat, "B", 1) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah DKI Jakarta \n\n");
+		}
+		else if (strncmp(parkir.plat, "AA, AD", 2) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Jawa Tengah \n\n");
+		} 
+		else if (strncmp(parkir.plat, "A", 1) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Banten \n\n");
+		}
+		else if (strncmp(parkir.plat, "D, E, F, Z", 1) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Jawa Barat \n\n");
+		}
+		else if (strncmp(parkir.plat, "L, M, N, P, S, W", 1) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Jawa Timur \n\n");
+		}
+		else if (strncmp(parkir.plat, "KB, DA, KH, KT, KU", 2) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Kalimantan \n\n");
+		}
+		else if (strncmp(parkir.plat, "DB, DL, DM, DN, DT, DD, DC", 2) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Sulawesi \n\n");
+		}
+		else if (strncmp(parkir.plat, "PA, PB", 2) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Papua \n\n");
+		}
+		else if (strncmp(parkir.plat, "DE, DG", 2) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Maluku \n\n");
+		}
+		else if (strncmp(parkir.plat, "BL, BB, BK, BA, BM, BH, BD, BP, BG, BN, BE", 2) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Sumatra \n\n");
+		}
+		else if (strncmp(parkir.plat, "DR, EA, DH, EB, ED", 2) == 0) {
+		printf("Asal Kendaraan Ini dari Daerah Nusa Tenggara \n\n");
+		}
+		else {
+		printf("Plat Kendaraan Belum Terdaftar \n\n");
+		}
+	
     fclose(Data);
 }
 
@@ -180,9 +224,10 @@ void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
 	char masuk[20];
     t = time(NULL);
     tm = localtime(&t);
-	float biaya, progresif, lama, jam;
+	float biaya, progresif, jam;
+	double lama;
 	float bayar, kembalian;
-	//keluar = time(&keluar);
+//	keluar = time(&keluar);
 	
 	printf("+-----------------------------------------------------+\n");
 	printf("|                  JENIS KENDARAAN                    |\n");
@@ -202,6 +247,7 @@ void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
 	scanf("%[^\n]", parkir.plat);
 	getchar();
 	system ("cls");
+	
 
 //pengambilan data diambil dari plat nomornya, untuk di struk data terakhir. 
 	Data = fopen("masuk.txt", "r");
@@ -321,9 +367,6 @@ void meninggalkan() { //prosedur untuk menu kedua saat kendaraan keluar parkir
 	remove("masuk.txt");
 	rename("masuk.txt", "keluar.txt");
 	
-	
-//	printf("Kendaraan plat %s telah keluar parkiran \n", plat);
-	
 }
 
 void cekparkir() {
@@ -336,6 +379,7 @@ void cekparkir() {
 	char jenisR4[30] = "Kendaraan R4";
 	char jenisR2[30] = "Kendaraan R2";
 	char jenisR6[30] = "Kendaraan R6";
+	char jenisR4PRE[30] = "Kendaraan R4 PRE";
 	
 	
 	
@@ -398,6 +442,19 @@ do{
 				fclose(Data);
 				printf ("Total %s = %d \n", jenisR6,total );
 				break;
+			case 4 :	
+				Data = fopen("coba.txt", "r");
+				while(fgets(buff, sizeof(buff), Data)){
+					strcpy(jenis_kendaraan, strtok(buff, ","));
+ 
+			jenis_sama = strcmp(jenis_kendaraan, jenisR4PRE);
+			if (jenis_sama == 0 ){
+				total++;
+			} 
+		}
+				fclose(Data);
+				printf ("Total %s = %d \n", jenisR4PRE,total );
+				break;
  
 		}
 		if(areaparkir <1 || areaparkir >4){
@@ -421,6 +478,7 @@ int cekkeluar() {
 	char jenisR4[30] = "Kendaraan R4";
 	char jenisR2[30] = "Kendaraan R2";
 	char jenisR6[30] = "Kendaraan R6";
+	char jenisR4PRE[30] = "Kendaraan R4 PRE";
  
  
  
@@ -481,8 +539,21 @@ int cekkeluar() {
 				total++;
 			} 
 		}
+			case 4 :
 				fclose(Data);
-				printf ("Total %s = %d \n", jenisR6,total );
+				printf ("Total %s = %d \n", jenisR4PRE,total );
+				break;
+				Data = fopen("coba.txt", "r");
+				while(fgets(buff, sizeof(buff), Data)){
+					strcpy(jenis_kendaraan, strtok(buff, ","));
+ 
+				jenis_sama = strcmp(jenis_kendaraan, jenisR4PRE);
+				if (jenis_sama == 0 ){
+					total++;
+			} 
+		}
+				fclose(Data);
+				printf ("Total %s = %d \n", jenisR2,total );
 				break;
  
 		}
